@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { SigninComponent } from './auth/signin/signin.component';
@@ -9,8 +8,25 @@ import { BookListComponent } from './book-list/book-list.component';
 import { SingleBookComponent } from './book-list/single-book/single-book.component';
 import { BookFormComponent } from './book-list/book-form/book-form.component';
 import { HeaderComponent } from './header/header.component';
-import { BooksComponent } from './services/books/books.component';
-import { AuthGuardComponent } from './services/auth-guard/auth-guard.component';
+import { AuthService } from './services/auth.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {HttpClientModule}from '@angular/common/http';
+import { RouterModule, Routes } from '@angular/router';
+import { BookService } from './services/books.service';
+import { AuthGuardService } from './services/auth-guard.service';
+
+const appRoutes : Routes = [
+  
+  {path: 'auth/signup', component: SignupComponent},
+  {path: 'auth/signin', component: SigninComponent},
+  {path: 'books', component: BookListComponent},
+  {path: 'books/new', component: BookFormComponent},
+  {path: 'books/view/:id', component: SingleBookComponent},
+    
+  
+];
+
+
 
 @NgModule({
   declarations: [
@@ -21,14 +37,20 @@ import { AuthGuardComponent } from './services/auth-guard/auth-guard.component';
     SingleBookComponent,
     BookFormComponent,
     HeaderComponent,
-    BooksComponent,
-    AuthGuardComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [
+    AuthService,
+    BookService,
+    AuthGuardService
+    
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
