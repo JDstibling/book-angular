@@ -18,9 +18,28 @@ export class AuthService {
             firebase.auth().createUserWithEmailAndPassword(email, password).then(
               () => {
                 resolve();
+                console.log('Création user');
               },
               (error) => {
                 reject(error);
+                console.log('Une erreur a été rencontré lors de la création d\'un user' +error);
+              }
+            );
+          }
+        );
+    }
+
+    signInUser(email: string, password: string) {
+        return new Promise<void>(
+          (resolve, reject) => {
+            firebase.auth().signInWithEmailAndPassword(email, password).then(
+              () => {
+                resolve();
+                console.log('Connexion user');
+              },
+              (error) => {
+                reject(error);
+                console.log('Une erreur a été rencontré lors de la connexion' +error);
               }
             );
           }
