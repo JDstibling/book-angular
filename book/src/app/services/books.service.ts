@@ -31,7 +31,8 @@ export class BookService {
           );
       }
     
-      getSingleBook(id: number) {
+      getSingleBook(id: number): Promise<Book> {
+        // afin de s'assurer de retourner un objet Book, ajout de "Promise<book>"
         return new Promise(
           (resolve, reject) => {
               // la méthode .once utilisé pour récupèrer les data une seule fois
