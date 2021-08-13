@@ -92,7 +92,9 @@ export class BookService {
                 reject();
               },
               () => {
-                resolve(upload.snapshot.downloadURL);
+                //resolve(upload.snapshot.downloadURL); // ancienne méthode buggué 
+                //  doc : https://firebase.google.com/docs/storage/web/upload-files
+                resolve(upload.snapshot.ref.getDownloadURL());
               }
 
             );
