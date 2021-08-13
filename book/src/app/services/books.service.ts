@@ -70,5 +70,34 @@ export class BookService {
           
 
       }
+
+      uploadFile(file: File) {
+        return new Promise(
+          (resolve, reject) => {
+            // création d'un nom de fichier unique (via les millisecondes inclu dans la méthode now)
+            const almostUniqueFileName = Date.now().toString();
+            //création de l'upload du fichier
+            const upload = firebase.storage().ref()   // ref sans argument rend la racine du storage
+            .child('images/' + almostUniqueFileName + file.name)
+            // enregistrement du file dans le dossier, (au nom de fichier choisis) comme sous dossier de la racine du storage
+            .put(file);
+            // Réagir aux différents événements lié à l'upload (les inclures dans les paramètres de la méthode "on")
+            upload.on(firebase.storage.TaskEvent.STATE_CHANGED,
+              // ajout des 3 méthodes nécessaire (pendant, si erreur et si resolve)
+              () => {
+                console.log('chargement...');
+              },
+              (error) => {
+                console.log('l\'erreur ' + error + 'a été rencontrée');
+                reject();
+              },
+              () => {
+                resolve(upload.snapshot.downloadURL);
+              }
+
+            );
+          }
+        )
+      }
     
 }

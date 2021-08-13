@@ -11,7 +11,7 @@ import { BookService } from 'src/app/services/books.service';
 })
 export class BookFormComponent implements OnInit {
 
-  // form reactive
+  // form reactive donc besoin d'ajouter formbuilder dans le constructor + initform dans ngoninit
   bookForm!: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
@@ -23,6 +23,7 @@ export class BookFormComponent implements OnInit {
   }
 
   initForm() {
+    //initialisation du form reactive
     this.bookForm = this.formBuilder.group(
       {
         title: ['', Validators.required],
@@ -32,6 +33,7 @@ export class BookFormComponent implements OnInit {
   }
 
   onSaveBook() {
+    //récupération des datas, création d'un book et redirection
     const title = this.bookForm.get('title')?.value;
     const author = this.bookForm.get('author')?.value;
     const newBook = new Book(title, author);
