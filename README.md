@@ -402,6 +402,8 @@ Il faut également prendre en compte que si un livre est supprimé, il faut éga
 
 >Puisqu'il faut une référence pour supprimer un fichier avec la méthode  delete() , vous passez l'URL du fichier à  refFromUrl()  pour en récupérer la référence.
 
+...
+
 
 
 
