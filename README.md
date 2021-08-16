@@ -47,4 +47,47 @@
 
 - Ajout  de **FormsModule**, **reactiveModule** et **HttpClientModule** dans Import de **app.module**
 
-	
+> Ne pas oublier d'ajouter les imports en haut du fichier !
+
+**Etape 2**
+*Intégration du router (sans guard afin de tester toutes les routes)* 
+-
+    const appRoutes: Routes = [
+    { path: 'auth/signup', component: SignupComponent },
+    { path: 'auth/signin', component: SigninComponent },
+    { path: 'books', component: BookListComponent },
+    { path: 'books/new', component: BookFormComponent },
+    { path: 'books/view/:id', component: SingleBookComponent }
+    ];
+
+- Imports du router dans **imports** de **app.module**
+
+    imports: [
+
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        RouterModule.forRoot(appRoutes)
+    ],
+
+- Générer un dossier **Models** et créer le fichier model pour les books exemple *book.model.ts*
+
+- Eventuellement, installation de boostrap
+
+    *npm install bootstrap@3.3.7 --save*
+
+- Modifier le fichier angular.json
+
+
+    "styles": [
+            "../node_modules/bootstrap/dist/css/bootstrap.css",
+            "styles.css"
+    ],
+
+- Préparez  HeaderComponent  avec un menu de navigation, avec les  routerLink  et AppComponent qui l'intègre avec le  router-outlet.
+
+
+
+
+
