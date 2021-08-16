@@ -1,5 +1,5 @@
 export class Book {
-    photo: string = "";
+    photo!: string;
     id!: number;
 
     constructor (public title: String, public author: String) {

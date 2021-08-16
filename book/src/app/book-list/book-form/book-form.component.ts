@@ -19,8 +19,6 @@ export class BookFormComponent implements OnInit {
   
   fileURL :string = '';
 
-  url : string = '';
-
   // fin de download du fichier 
   fileUploaded = false;
 
@@ -46,11 +44,14 @@ export class BookFormComponent implements OnInit {
     //récupération des datas, création d'un book et redirection
     const title = this.bookForm.get('title')?.value;
     const author = this.bookForm.get('author')?.value;
+    const imgUrl = this.fileURL !== '' ? this.fileURL : '';
+
     const newBook = new Book(title, author);
 
     // si présence d'un url d'un fichier
     if(this.fileURL && this.fileURL !== ''){
-      newBook.photo = this.url;
+      newBook.photo = this.fileURL;
+      console.log('photo: ' +this.fileURL);
     }
 
     this.booksService.createNewBook(newBook);
@@ -63,8 +64,9 @@ export class BookFormComponent implements OnInit {
     this.booksService.uploadFile(file).then(
       // si la méthode réussis, récupération d'un url
         (url: any) => {
-          console.log(url);                                          // A CORRIGER
+          //console.log(url);                                          // A CORRIGER
           this.fileURL = url ;
+          console.log('état de mon url image : ' + this.fileURL);  //______________________________ résultat du debug ok (récupèration de l'url correct)
           this.fileIsUploading = false;
           this.fileUploaded = true;
         }
@@ -73,9 +75,10 @@ export class BookFormComponent implements OnInit {
 
   }
 
-  detectFiles(event:any) { // après plusieurs recherche, ajout de any au event!)
-    //utilisation de la méthode onUpFile avec l'event du dom en argument
+  detectFiles(event:any) { // après plusieurs recherche, ajout de any au event. Plus de bug mais pas le résultat attendu)
+    //utilisation de la méthode onUploadFile avec l'event du dom en argument
     // lors de l'utilisation d'un input de type file il comporte un target avec un array files
+
     this.onUploadFile(event.target.files[0]);
   }
 

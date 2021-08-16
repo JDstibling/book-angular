@@ -55,6 +55,18 @@ export class BookService {
       }
 
       removeBook(book: Book) {
+        if (book.photo){
+          const storageRef = firebase.storage().refFromURL(book.photo);
+          storageRef.delete().then(
+            () => {
+              console.log('Photo supprimée !')
+            }
+          ).catch(
+            (error) => {
+              console.log('Fichier non trouvé : ' + error);
+            }
+          );
+        }
           const bookINdexToRemove = this.books.findIndex(
               (bookEl) =>{
                 if(bookEl === book) {
@@ -88,13 +100,14 @@ export class BookService {
                 console.log('chargement...');
               },
               (error) => {
-                console.log('l\'erreur ' + error + 'a été rencontrée');
+                console.log('erreur : ' + error);
                 reject();
               },
               () => {
                 //resolve(upload.snapshot.downloadURL); // ancienne méthode buggué 
                 //  doc : https://firebase.google.com/docs/storage/web/upload-files
                 resolve(upload.snapshot.ref.getDownloadURL());
+                // this.books.photo = upload.snapshot.ref.getDownloadURL();
               }
 
             );
