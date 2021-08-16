@@ -320,8 +320,87 @@ Utilisation de l'API Firebase pour permettre à l'user d'ajouter une photo du li
 > Pour des applications à très grande échelle, la méthode  Date.now()  ne garantit pas à 100% un nom de fichier unique, mais pour une application de cette échelle, cette méthode suffit largement.
 
 
+**Etape 12** 
+*Ajout de fonctionnalités à BookFormComponent*
+-
+
+    bookForm: FormGroup;
+    fileIsUploading = false;
+    fileUrl: string;
+    fileUploaded = false;
+
+- Créer la méthode qui déclenchera uploadfile() et qui en récupérera l'URL retourné
 
 
+    onUploadFile(file: File) {
+
+        this.fileIsUploading = true;
+        this.booksService.uploadFile(file).then(
+        (url: string) => {
+            this.fileUrl = url;
+            this.fileIsUploading = false;
+            this.fileUploaded = true;
+        }
+        );
+    }
+
+>Utilisation de fileIsUploading pour desactiver le bouton submit du template pendant le chargement du fichier afin d'éviter toute erreur. Une fois l'upload terminé, le component enregistre l'URL retourné dans fileUrl et modifie l'état du component pour dire que le chargement est terminé.
+
+**Etape 13** 
+*books-list-component*
+-
+- Modification légère de onSaveBook pour prendre en compte l'URL de la photo si elle existe*
+
+    onSaveBook() {
+        const title = this.bookForm.get('title').value;
+        const author = this.bookForm.get('author').value;
+        const synopsis = this.bookForm.get('synopsis').value;
+        const newBook = new Book(title, author);
+        newBook.synopsis = synopsis;
+        if(this.fileUrl && this.fileUrl !== '') {
+        newBook.photo = this.fileUrl;
+        }
+        this.booksService.createNewBook(newBook);
+        this.router.navigate(['/books']);
+    }
+- Création d'une méthode qui permet de lier le input de type file à la méthode onUploadFile()
+
+    detectFiles(event) {
+
+        this.onUploadFile(event.target.files[0]);
+    }
+    
+> Dans le template : Dès que l'utilisateur choisit un fichier, l'événement est déclenché et le fichier est uploadé.  Le texte "Fichier chargé !" est affiché lorsque  fileUploaded  est  true , et le bouton est désactivé quand le formulaire n'est pas valable ou quand  fileIsUploading  est  true .
+
+>Puis si l'image existe, l'afficher dans le component SingleBookComponent
+
+Il faut également prendre en compte que si un livre est supprimé, il faut également en supprimer la photo.  La nouvelle méthode  removeBook()  est la suivante :
+
+    removeBook(book: Book) {
+        if(book.photo) {
+        const storageRef = firebase.storage().refFromURL(book.photo);
+        storageRef.delete().then(
+            () => {
+            console.log('Photo removed!');
+            },
+            (error) => {
+            console.log('Could not remove photo! : ' + error);
+            }
+        );
+        }
+        const bookIndexToRemove = this.books.findIndex(
+        (bookEl) => {
+            if(bookEl === book) {
+            return true;
+            }
+        }
+        );
+        this.books.splice(bookIndexToRemove, 1);
+        this.saveBooks();
+        this.emitBooks();
+    }
+
+>Puisqu'il faut une référence pour supprimer un fichier avec la méthode  delete() , vous passez l'URL du fichier à  refFromUrl()  pour en récupérer la référence.
 
 
 
