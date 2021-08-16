@@ -205,6 +205,127 @@ Permet de naviguer vers BookFormComponent pour la création d'un nouveau livre
     }
     }
 
+**Etape 9** 
+*singleBookComponent*
+-
+- Récupération du livre demandé par son id grace à getSingleBook()
+
+    @Component({
+    selector: 'app-single-book',
+    templateUrl: './single-book.component.html',
+    styleUrls: ['./single-book.component.css']
+    })
+    export class SingleBookComponent implements OnInit {
+
+    book: Book;
+
+    constructor(private route: ActivatedRoute, private booksService: BooksService,
+                private router: Router) {}
+
+    ngOnInit() {
+        this.book = new Book('', '');
+        const id = this.route.snapshot.params['id'];
+        this.booksService.getSingleBook(+id).then(
+        (book: Book) => {
+            this.book = book;
+        }
+        );
+    }
+
+    onBack() {
+        this.router.navigate(['/books']);
+    }
+    }
+
+- Puis affichage dans le template
+
+**Etape 10** 
+*BookFormComponent*
+-
+- Formulaire (méthode réactive) qui enregistre les données reçues grace à createNewBook()
+
+    @Component({
+    selector: 'app-book-form',
+    templateUrl: './book-form.component.html',
+    styleUrls: ['./book-form.component.css']
+    })
+    export class BookFormComponent implements OnInit {
+
+    bookForm: FormGroup;
+
+    constructor(private formBuilder: FormBuilder, private booksService: BooksService,
+                private router: Router) { }
+                
+    ngOnInit() {
+        this.initForm();
+    }
+    
+    initForm() {
+        this.bookForm = this.formBuilder.group({
+        title: ['', Validators.required],
+        author: ['', Validators.required],
+        synopsis: ''
+        });
+    }
+    
+    onSaveBook() {
+        const title = this.bookForm.get('title').value;
+        const author = this.bookForm.get('author').value;
+        const synopsis = this.bookForm.get('synopsis').value;
+        const newBook = new Book(title, author);
+        newBook.synopsis = synopsis;
+        this.booksService.createNewBook(newBook);
+        this.router.navigate(['/books']);
+    }
+    }
+
+**Etape 11** 
+*Storage*
+-
+Utilisation de l'API Firebase pour permettre à l'user d'ajouter une photo du livre et de l'afficher dans singleBookComponent et de la supprimer si on supprime le livre pour ne pas laisser des photos inutilisées sur le serveur.
+
+- Méthode pour uploader une image
+
+    uploadFile(file: File) {
+        return new Promise(
+        (resolve, reject) => {
+            const almostUniqueFileName = Date.now().toString();
+            const upload = firebase.storage().ref()
+            .child('images/' + almostUniqueFileName + file.name).put(file);
+            upload.on(firebase.storage.TaskEvent.STATE_CHANGED,
+            () => {
+                console.log('Chargement…');
+            },
+            (error) => {
+                console.log('Erreur de chargement ! : ' + error);
+                reject();
+            },
+            () => {
+                resolve(upload.snapshot.ref.getDownloadURL());
+            }
+            );
+        }
+        );
+    }
+
+    - Méthode asynchrone qui prends en argumenbt un fichier de type file.
+    - Pour créer un nom de fichier unique, utilisation d'un string à partir de Date.now .
+    Création ensuite d'une tâche de chargement (upload)
+        - firebase.storage().ref() retourne une référence à la racine du bucket Firebase.
+        - La méthode child() retourne une référence au sous dossier images et à un nouveau fichier dont le nom est l'identifiant unique + le nom original du fichier (permettant de garder le format d'origine également)
+        - Utilisation de la méthode on() de la tâche upload pour en suivre l'état en y passant 3 fonctions :
+            - la première est déclenchée à chaque fois que les données sont envoyées vers le serveur
+            - la deuxième est déclenchée si le serveur renvoie une erreur
+            - La troisième est déclenchée lorsque le chargement est terminé et permet de retourner l'URL unique du fichier chargé.
+> Pour des applications à très grande échelle, la méthode  Date.now()  ne garantit pas à 100% un nom de fichier unique, mais pour une application de cette échelle, cette méthode suffit largement.
+
+
+
+
+
+
+
+
 
 
 
