@@ -166,11 +166,6 @@
 - Permet de supprimer chaque livre en utilisant removeBook()
 Permet de naviguer vers BookFormComponent pour la création d'un nouveau livre
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BooksService } from '../services/books.service';
-import { Book } from '../models/book.model';
-import { Subscription } from 'rxjs/Subscription';
-import { Router } from '@angular/router';
 
     @Component({
     selector: 'app-book-list',
